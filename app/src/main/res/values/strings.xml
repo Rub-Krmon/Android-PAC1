@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">PAC1</string>
-    <string name="title_activity_book_list">BookListActivity</string>
+    <string name="title_activity_book_list">PAC1</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_book_list">Books</string>
+    <string name="title_book_detail">Book Detail</string>
+    <string name="title_activity_book_detail">BookDetailActivity</string>
 </resources>
