@@ -7,4 +7,7 @@
     <string name="title_book_list">Books</string>
     <string name="title_book_detail">Book Detail</string>
     <string name="title_activity_book_detail">BookDetailActivity</string>
+
+    <string name="title_default_text">Title</string>
+    <string name="author_default_text">Author</string>
 </resources>
