@@ -30,6 +30,7 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
 
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
+        recyclerView.setHasFixedSize(true);
 
         BookListAdapter adapter = new BookListAdapter(this, BookContent.ITEMS);
         recyclerView.setAdapter(adapter);
@@ -37,10 +38,17 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
 
         if (findViewById(R.id.content_book_detail) != null) {
             BookDetailFragment aBookDetailFragment = new BookDetailFragment();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.content_book_detail, aBookDetailFragment)
-                    .commit();
+            Bundle arguments = new Bundle();
+
+            if (savedInstanceState == null) {
+                arguments.putInt(BookDetailFragment.BOOK_POSITION,
+                        getIntent().getIntExtra(BookDetailFragment.BOOK_POSITION, 0));
+                aBookDetailFragment.setArguments(arguments);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_book_detail, aBookDetailFragment)
+                        .commit();
+            }
         }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

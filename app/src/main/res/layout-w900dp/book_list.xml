@@ -21,21 +21,31 @@
 
     </android.support.design.widget.AppBarLayout>
 
-
-    <include
-        layout="@layout/content_book_list"
-        android:id="@+id/include"
-        android:layout_width="512dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:layout_weight="1" />
-
-    <FrameLayout
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/content_book_detail"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:elevation="8dp" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
+
+        <include
+            layout="@layout/content_book_list"
+            android:id="@+id/include"
+            android:layout_width="512dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/content_book_detail"
+            android:layout_toRightOf="@+id/content_book_list"
+            android:layout_toEndOf="@+id/content_book_list"
+            android:elevation="8dp"
+            android:layout_weight="1">
+
+        </FrameLayout>
+    </LinearLayout>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

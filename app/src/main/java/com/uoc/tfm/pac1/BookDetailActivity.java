@@ -6,6 +6,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
+
+import com.uoc.tfm.pac1.model.BookContent;
 
 /**
  * @author Ruben Carmona
@@ -22,6 +25,16 @@ public class BookDetailActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        BookContent.BookItem selectedItem = BookContent.ITEMS.get(getIntent().getIntExtra(BookDetailFragment.BOOK_POSITION, 0));
+
+        if (selectedItem != null) {
+            setTitle(selectedItem.getTitle());
+            ((TextView) findViewById(R.id.textView_author)).setText(selectedItem.getAuthor());
+            ((TextView) findViewById(R.id.textView_date)).setText(selectedItem.getPublishedDate().toString());
+            ((TextView) findViewById(R.id.textView_description)).setText(selectedItem.getDescription());
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

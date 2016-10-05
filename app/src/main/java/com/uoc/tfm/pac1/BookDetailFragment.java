@@ -6,6 +6,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.uoc.tfm.pac1.model.BookContent;
 
 /**
  * @author Ruben Carmona
@@ -14,27 +17,20 @@ import android.view.ViewGroup;
  */
 
 public class BookDetailFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public static final String BOOK_POSITION = "bookPosition";
+
+    private BookContent.BookItem selectedItem = null;
 
     private OnFragmentInteractionListener mListener;
 
     public BookDetailFragment() {
-        // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
-    public static BookDetailFragment newInstance(String param1, String param2) {
+    public static BookDetailFragment newInstance(int pParam1) {
         BookDetailFragment fragment = new BookDetailFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(BOOK_POSITION, pParam1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -42,9 +38,10 @@ public class BookDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        if (getArguments() != null && getArguments().containsKey(BOOK_POSITION)) {
+            selectedItem = BookContent.ITEMS.get(getArguments().getInt(BOOK_POSITION));
+        } else {
+            selectedItem = null;
         }
 
         if (mListener != null) {
@@ -55,8 +52,16 @@ public class BookDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_book_detail, container, false);
+
+        View v = inflater.inflate(R.layout.fragment_book_detail, container, false);
+
+        if (selectedItem != null) {
+            ((TextView) v.findViewById(R.id.textView_author)).setText(selectedItem.getAuthor());
+            ((TextView) v.findViewById(R.id.textView_date)).setText(selectedItem.getPublishedDate().toString());
+            ((TextView) v.findViewById(R.id.textView_description)).setText(selectedItem.getDescription());
+        }
+
+        return v;
     }
 
     @Override
