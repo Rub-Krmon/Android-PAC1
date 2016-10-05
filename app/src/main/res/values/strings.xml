@@ -10,4 +10,6 @@
 
     <string name="title_default_text">Title</string>
     <string name="author_default_text">Author</string>
+    <string name="date_default_text">Date</string>
+    <string name="cover_description">Cover Description</string>
 </resources>

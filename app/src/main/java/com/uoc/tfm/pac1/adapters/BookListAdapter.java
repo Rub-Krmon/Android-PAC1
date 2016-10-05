@@ -2,6 +2,7 @@ package com.uoc.tfm.pac1.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,16 +24,14 @@ import java.util.ArrayList;
 
 public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHolder> {
 
-    private final ArrayList<BookContent.BookItem> mBookItems;
-
-    Context mContext;
     private final static int EVEN = 0;
     private final static int ODD = 1;
-
+    private final ArrayList<BookContent.BookItem> mBookItems;
+    Context mContext;
     private boolean mTwoPane = false;
 
     // Constructor donde se pasan los items y el contexto
-    public BookListAdapter(Context context, ArrayList<BookContent.BookItem> pBooksItems) {
+    public BookListAdapter(Context context, ArrayList<BookContent.BookItem> pBooksItems, boolean pTwoPane) {
         this.mContext = context;
         this.mBookItems = pBooksItems;
     }
@@ -63,19 +62,18 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
         holder.mItem = mBookItems.get(position);
         holder.mTitleView.setText(mBookItems.get(position).getTitle());
         holder.mAuthorView.setText(mBookItems.get(position).getAuthor());
-    holder.mCurrentPosition = position;
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int currentPos = position;
 
-// ============ INICI CODI A COMPLETAR =============== // Obtindre la posició del llibre on s’ha fet click de la vista
-// ============ FI CODI A COMPLETAR =================
-                System.out.println("Pulsado");
                 if (mTwoPane) {
-// ============ INICI CODI A COMPLETAR ===============
-// Iniciar el fragment corresponent a tablet, enviant l’argument de la posició seleccionada // ============ FI CODI A COMPLETAR =================
+                    BookDetailFragment aBookDetailFragment = BookDetailFragment.newInstance(currentPos);
+                    ((AppCompatActivity) mContext).getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.content_book_detail, aBookDetailFragment)
+                            .commit();
                 } else {
                     Intent intent = new Intent(mContext, BookDetailActivity.class);
                     intent.putExtra(BookDetailFragment.BOOK_POSITION, currentPos);
@@ -96,11 +94,14 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
         return pPosition % 2 == 0 ? EVEN : ODD;
     }
 
+    public void setmTwoPane(boolean mTwoPane) {
+        this.mTwoPane = mTwoPane;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private BookContent.BookItem mItem;
         private TextView mTitleView, mAuthorView;
         private View mView;
-        private int mCurrentPosition;
 
         public ViewHolder(View pView) {
             super(pView);

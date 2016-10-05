@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Toast;
 
 import com.uoc.tfm.pac1.adapters.BookListAdapter;
 import com.uoc.tfm.pac1.model.BookContent;
@@ -21,6 +20,9 @@ import com.uoc.tfm.pac1.model.BookContent;
 
 public class BookListActivity extends AppCompatActivity implements BookDetailFragment.OnFragmentInteractionListener {
 
+    BookListAdapter adapter;
+    boolean mTwoPane = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,24 +34,21 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycle_view);
         recyclerView.setHasFixedSize(true);
 
-        BookListAdapter adapter = new BookListAdapter(this, BookContent.ITEMS);
-        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         if (findViewById(R.id.content_book_detail) != null) {
-            BookDetailFragment aBookDetailFragment = new BookDetailFragment();
+            mTwoPane = true;
+            BookDetailFragment aBookDetailFragment = BookDetailFragment.newInstance(getIntent().getIntExtra(BookDetailFragment.BOOK_POSITION, 0));
             Bundle arguments = new Bundle();
 
-            if (savedInstanceState == null) {
-                arguments.putInt(BookDetailFragment.BOOK_POSITION,
-                        getIntent().getIntExtra(BookDetailFragment.BOOK_POSITION, 0));
-                aBookDetailFragment.setArguments(arguments);
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.content_book_detail, aBookDetailFragment)
-                        .commit();
-            }
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.content_book_detail, aBookDetailFragment)
+                    .commit();
         }
+
+        adapter = new BookListAdapter(this, BookContent.ITEMS, mTwoPane);
+        recyclerView.setAdapter(adapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -62,7 +61,9 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
     }
 
     @Override
-    public void onFragmentInteraction(String mensaje) { // Mensaje recibido, se muestra un Toast
-        Toast.makeText(this, "Mensaje nuevo:" + mensaje, Toast.LENGTH_LONG).show();
+    public void onFragmentInteraction(String mensaje) {
+        if (adapter != null) {
+            adapter.setmTwoPane(true);
+        }
     }
 }
