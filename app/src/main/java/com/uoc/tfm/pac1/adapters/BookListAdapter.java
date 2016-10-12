@@ -27,11 +27,12 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
     private final static int EVEN = 0;
     private final static int ODD = 1;
     private final ArrayList<BookContent.BookItem> mBookItems;
-    Context mContext;
+
+    private Context mContext;
     private boolean mTwoPane = false;
 
     // Constructor donde se pasan los items y el contexto
-    public BookListAdapter(Context context, ArrayList<BookContent.BookItem> pBooksItems, boolean pTwoPane) {
+    public BookListAdapter(Context context, ArrayList<BookContent.BookItem> pBooksItems) {
         this.mContext = context;
         this.mBookItems = pBooksItems;
     }
@@ -40,6 +41,8 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
     public BookListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
 
+        // En función del tipo de vista se muestra
+        // un layout u otro
         switch (viewType) {
             case EVEN:
                 view = LayoutInflater.from(parent.getContext())
@@ -58,15 +61,16 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(BookListAdapter.ViewHolder holder, final int position) {
-        holder.mItem = mBookItems.get(position);
-        holder.mTitleView.setText(mBookItems.get(position).getTitle());
-        holder.mAuthorView.setText(mBookItems.get(position).getAuthor());
+    public void onBindViewHolder(BookListAdapter.ViewHolder pHolder, final int pPosition) {
+        pHolder.setmPosition(pPosition);
+        pHolder.setmItem(mBookItems.get(pPosition));
+        pHolder.getmTitleView().setText(mBookItems.get(pPosition).getTitle());
+        pHolder.getmAuthorView().setText(mBookItems.get(pPosition).getAuthor());
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        pHolder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int currentPos = position;
+                int currentPos = pPosition;
 
                 if (mTwoPane) {
                     BookDetailFragment aBookDetailFragment = BookDetailFragment.newInstance(currentPos);
@@ -98,7 +102,12 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
         this.mTwoPane = mTwoPane;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    /*
+    * Contiene la referencia a los elementos que se muestran en
+    * cada una de las filas que componen la lista.
+    */
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private int mPosition;
         private BookContent.BookItem mItem;
         private TextView mTitleView, mAuthorView;
         private View mView;
@@ -111,16 +120,6 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
             mView = pView;
         }
 
-        // Handles the row being being clicked
-        @Override
-        public void onClick(View view) {
-            int position = getLayoutPosition(); // obtiene la posición del item
-        }
-
-        public BookContent.BookItem getmItem() {
-            return mItem;
-        }
-
         public void setmItem(BookContent.BookItem mItem) {
             this.mItem = mItem;
         }
@@ -129,16 +128,20 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
             return mTitleView;
         }
 
-        public void setmTitleView(TextView mTitleView) {
-            this.mTitleView = mTitleView;
-        }
-
         public TextView getmAuthorView() {
             return mAuthorView;
         }
 
         public void setmAuthorView(TextView mAuthorView) {
             this.mAuthorView = mAuthorView;
+        }
+
+        public int getmPosition() {
+            return mPosition;
+        }
+
+        public void setmPosition(int mPosition) {
+            this.mPosition = mPosition;
         }
     }
 }

@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.uoc.tfm.pac1.model.BookContent;
@@ -24,13 +25,20 @@ public class BookDetailFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    /*
+    * Variable temporal para esta entrega que sirve para
+    * mostrar una portada u otra en función de si es par o
+    * impar la posición del elemento en la lista
+    */
+    private int mBookCoverEvenOrOdd = 0;
+
     public BookDetailFragment() {
     }
 
-    public static BookDetailFragment newInstance(int pParam1) {
+    public static BookDetailFragment newInstance(int pParam) {
         BookDetailFragment fragment = new BookDetailFragment();
         Bundle args = new Bundle();
-        args.putInt(BOOK_POSITION, pParam1);
+        args.putInt(BOOK_POSITION, pParam);
         fragment.setArguments(args);
         return fragment;
     }
@@ -40,11 +48,12 @@ public class BookDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null && getArguments().containsKey(BOOK_POSITION)) {
             selectedItem = BookContent.ITEMS.get(getArguments().getInt(BOOK_POSITION));
+            mBookCoverEvenOrOdd = getArguments().getInt(BOOK_POSITION) % 2;
         } else {
             selectedItem = null;
         }
         if (mListener != null) {
-            mListener.onFragmentInteraction("Hello world");
+            mListener.onFragmentInteraction();
         }
     }
 
@@ -58,6 +67,7 @@ public class BookDetailFragment extends Fragment {
             ((TextView) v.findViewById(R.id.textView_author)).setText(selectedItem.getAuthor());
             ((TextView) v.findViewById(R.id.textView_date)).setText(selectedItem.getPublishedDate().toString());
             ((TextView) v.findViewById(R.id.textView_description)).setText(selectedItem.getDescription());
+            ((ImageView) v.findViewById(R.id.imageView_cover)).setImageResource(mBookCoverEvenOrOdd == 0 ? R.drawable.even_cover : R.drawable.odd_cover);
         }
 
         return v;
@@ -69,8 +79,7 @@ public class BookDetailFragment extends Fragment {
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -80,8 +89,11 @@ public class BookDetailFragment extends Fragment {
         mListener = null;
     }
 
+    /*
+    * Intefaz Listener para informar de la presencia
+    * del Fragment al RecyclerView BookListAdapter
+    */
     public interface OnFragmentInteractionListener {
-
-        void onFragmentInteraction(String message);
+        void onFragmentInteraction();
     }
 }

@@ -9,11 +9,18 @@ import java.util.Date;
  * @date 10/2016
  */
 
-
+/**
+ * Clase que representa los elementos libro
+ * a utilizar en la aplicación
+ */
 public class BookContent {
 
     public static final ArrayList<BookItem> ITEMS = new ArrayList<>();
 
+    /*
+    * Variable estática de una lista de elementos
+    * para falsear los datos a mostrar
+    */
     static {
         BookItem book1 = new BookItem(0, "Title1", "Author1", new Date(), "Description", null);
         BookItem book2 = new BookItem(1, "Title2", "Author2", new Date(), "Description 2", null);
