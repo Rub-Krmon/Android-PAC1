@@ -1,4 +1,4 @@
-package com.uoc.tfm.pac1;
+package com.uoc.pac2;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.uoc.tfm.pac1.model.BookContent;
+import com.uoc.pac2.model.BookContent;
 
 /**
  * @author Ruben Carmona
@@ -35,7 +35,7 @@ public class BookDetailActivity extends AppCompatActivity {
         if (selectedItem != null) {
             setTitle(selectedItem.getTitle());
             ((TextView) findViewById(R.id.textView_author)).setText(selectedItem.getAuthor());
-            ((TextView) findViewById(R.id.textView_date)).setText(selectedItem.getPublishedDate().toString());
+            ((TextView) findViewById(R.id.textView_date)).setText(selectedItem.getPublication_date().toString());
             ((TextView) findViewById(R.id.textView_description)).setText(selectedItem.getDescription());
             ((ImageView) findViewById(R.id.imageView_cover)).setImageResource(mBookCoverEvenOrOdd == 0 ? R.drawable.even_cover : R.drawable.odd_cover);
         }

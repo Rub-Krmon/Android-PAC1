@@ -1,4 +1,4 @@
-package com.uoc.tfm.pac1;
+package com.uoc.pac2;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

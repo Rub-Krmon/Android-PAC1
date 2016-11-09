@@ -1,4 +1,4 @@
-package com.uoc.tfm.pac1;
+package com.uoc.tfm.pac2;
 
 import org.junit.Test;
 

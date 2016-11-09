@@ -1,4 +1,4 @@
-package com.uoc.tfm.pac1.adapters;
+package com.uoc.pac2.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,10 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.uoc.tfm.pac1.BookDetailActivity;
-import com.uoc.tfm.pac1.BookDetailFragment;
-import com.uoc.tfm.pac1.R;
-import com.uoc.tfm.pac1.model.BookContent;
+import com.uoc.pac2.BookDetailActivity;
+import com.uoc.pac2.BookDetailFragment;
+import com.uoc.pac2.R;
+import com.uoc.pac2.model.BookContent;
 
 import java.util.ArrayList;
 
@@ -62,7 +62,9 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(BookListAdapter.ViewHolder pHolder, final int pPosition) {
-        pHolder.setmPosition(pPosition);
+
+        pHolder.getmView().setTag(pPosition);
+
         pHolder.setmItem(mBookItems.get(pPosition));
         pHolder.getmTitleView().setText(mBookItems.get(pPosition).getTitle());
         pHolder.getmAuthorView().setText(mBookItems.get(pPosition).getAuthor());
@@ -70,7 +72,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
         pHolder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int currentPos = pPosition;
+                int currentPos = (int) v.getTag();
 
                 if (mTwoPane) {
                     BookDetailFragment aBookDetailFragment = BookDetailFragment.newInstance(currentPos);
@@ -107,7 +109,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
     * cada una de las filas que componen la lista.
     */
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private int mPosition;
+
         private BookContent.BookItem mItem;
         private TextView mTitleView, mAuthorView;
         private View mView;
@@ -132,16 +134,12 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
             return mAuthorView;
         }
 
+        public View getmView() {
+            return mView;
+        }
+
         public void setmAuthorView(TextView mAuthorView) {
             this.mAuthorView = mAuthorView;
-        }
-
-        public int getmPosition() {
-            return mPosition;
-        }
-
-        public void setmPosition(int mPosition) {
-            this.mPosition = mPosition;
         }
     }
 }

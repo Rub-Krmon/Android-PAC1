@@ -1,4 +1,4 @@
-package com.uoc.tfm.pac1;
+package com.uoc.pac2;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.uoc.tfm.pac1.model.BookContent;
+import com.uoc.pac2.model.BookContent;
 
 /**
  * @author Ruben Carmona
@@ -65,7 +65,7 @@ public class BookDetailFragment extends Fragment {
 
         if (selectedItem != null) {
             ((TextView) v.findViewById(R.id.textView_author)).setText(selectedItem.getAuthor());
-            ((TextView) v.findViewById(R.id.textView_date)).setText(selectedItem.getPublishedDate().toString());
+            ((TextView) v.findViewById(R.id.textView_date)).setText(selectedItem.getPublication_date().toString());
             ((TextView) v.findViewById(R.id.textView_description)).setText(selectedItem.getDescription());
             ((ImageView) v.findViewById(R.id.imageView_cover)).setImageResource(mBookCoverEvenOrOdd == 0 ? R.drawable.even_cover : R.drawable.odd_cover);
         }

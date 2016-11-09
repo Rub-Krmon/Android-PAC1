@@ -1,8 +1,8 @@
-package com.uoc.tfm.pac1.utils;
+package com.uoc.pac2.utils;
 
 import android.content.Context;
 
-import com.uoc.tfm.pac1.R;
+import com.uoc.pac2.R;
 
 /**
  * @author Ruben Carmona

@@ -1,5 +1,7 @@
-package com.uoc.tfm.pac1.model;
+package com.uoc.pac2.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -29,20 +31,24 @@ public class BookContent {
     }
 
     public static class BookItem {
-        private int id;
-        private String title;
-        private String author;
-        private Date publishedDate;
-        private String description;
-        private String frontImageURL;
+        public int id;
+        public String title;
+        public String author;
+        public Date publication_date;
+        public String description;
+        public String url_image;
 
-        public BookItem(int pId, String pTitle, String pAuthor, Date pPublishedDate, String pDescription, String pFrontImageURL) {
+        public BookItem() {
+
+        }
+
+        public BookItem(int pId, String pTitle, String pAuthor, Date pPublishedDate, String pDescription, String pUrlImage) {
             this.id = pId;
             this.title = pTitle;
             this.author = pAuthor;
-            this.publishedDate = pPublishedDate;
+            this.publication_date = pPublishedDate;
             this.description = pDescription;
-            this.frontImageURL = pFrontImageURL;
+            this.url_image = pUrlImage;
         }
 
         public int getId() {
@@ -57,16 +63,25 @@ public class BookContent {
             return author;
         }
 
-        public Date getPublishedDate() {
-            return publishedDate;
+        public Date getPublication_date() {
+            return publication_date;
         }
 
         public String getDescription() {
             return description;
         }
 
-        public String getFrontImageURL() {
-            return frontImageURL;
+        public String getUrl_image() {
+            return url_image;
+        }
+
+        public void setPublication_date(String pString) {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            try {
+                this.publication_date = formatter.parse(pString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

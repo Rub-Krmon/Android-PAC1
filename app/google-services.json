@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "460378715377",
+    "firebase_url": "https://masteruoc-a22bb.firebaseio.com",
+    "project_id": "masteruoc-a22bb",
+    "storage_bucket": "masteruoc-a22bb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:460378715377:android:0bcb7a91413326b4",
+        "android_client_info": {
+          "package_name": "com.uoc.pac2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "460378715377-oc9kubgnk6al25dhmf0mpqt3j5o9chpp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6p546Z6Dj2-lndZuTOSW15zQxF-3tH3E"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
