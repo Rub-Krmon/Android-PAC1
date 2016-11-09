@@ -99,12 +99,14 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                                int id = 0;
                                 for (DataSnapshot bookSnapshot : dataSnapshot.getChildren()) {
                                     BookContent.BookItem book = bookSnapshot.getValue(BookContent.BookItem.class);
-                                    Log.d("FIREBASE DATABASE:", "Book title: " + book.getTitle());
+                                    book.setId(id);
                                     bookList.add(book);
-                                    adapter.notifyDataSetChanged();
+                                    id++;
                                 }
+                                adapter.notifyDataSetChanged();
                                 System.out.println(dataSnapshot.getValue());
                             }
 

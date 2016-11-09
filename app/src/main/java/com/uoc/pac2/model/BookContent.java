@@ -83,6 +83,10 @@ public class BookContent {
                 e.printStackTrace();
             }
         }
+
+        public void setId(int id) {
+            this.id = id;
+        }
     }
 }
 
