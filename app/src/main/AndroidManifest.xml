@@ -8,7 +8,22 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name="com.orm.SugarApp">
+        <!-- Meta data SugarORM -->
+        <meta-data
+            android:name="DATABASE"
+            android:value="books_uoc.db" />
+        <meta-data
+            android:name="VERSION"
+            android:value="3" />
+        <meta-data
+            android:name="QUERY_LOG"
+            android:value="true" />
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="com.uoc.pac2.model" />
+
         <activity
             android:name="com.uoc.pac2.BookListActivity"
             android:label="@string/title_activity_book_list"

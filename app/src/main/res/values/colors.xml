@@ -2,7 +2,9 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
+    <color name="lightBackground">#9DC6D8</color>
     <color name="colorAccent">#FF4081</color>
     <color name="evenColor">#ffffff</color>
     <color name="oddColor">#C3C9EF</color>
+    <color name="hintColorLight">#b2ebf2</color>
 </resources>

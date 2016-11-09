@@ -15,6 +15,7 @@ import com.uoc.pac2.R;
 import com.uoc.pac2.model.BookContent;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Ruben Carmona
@@ -26,7 +27,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
 
     private final static int EVEN = 0;
     private final static int ODD = 1;
-    private final ArrayList<BookContent.BookItem> mBookItems;
+    private ArrayList<BookContent.BookItem> mBookItems;
 
     private Context mContext;
     private boolean mTwoPane = false;
@@ -35,6 +36,11 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
     public BookListAdapter(Context context, ArrayList<BookContent.BookItem> pBooksItems) {
         this.mContext = context;
         this.mBookItems = pBooksItems;
+    }
+
+    public void setBooks(List<BookContent.BookItem> pNewBooks) {
+        this.mBookItems.addAll(pNewBooks);
+        this.notifyDataSetChanged();
     }
 
     @Override
@@ -81,8 +87,14 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
                             .replace(R.id.content_book_detail, aBookDetailFragment)
                             .commit();
                 } else {
+                    BookContent.BookItem aBookItem = mBookItems.get(currentPos);
                     Intent intent = new Intent(mContext, BookDetailActivity.class);
-                    intent.putExtra(BookDetailFragment.BOOK_POSITION, currentPos);
+                    intent.putExtra(BookContent.BookItem.BOOK_ID, aBookItem.getId());
+                    intent.putExtra(BookContent.BookItem.BOOK_AUTHOR, aBookItem.getAuthor());
+                    intent.putExtra(BookContent.BookItem.BOOK_TITLE, aBookItem.getTitle());
+                    intent.putExtra(BookContent.BookItem.BOOK_DESCRIPTION, aBookItem.getDescription());
+                    intent.putExtra(BookContent.BookItem.BOOK_PUBLICATION_DATE, aBookItem.getPublication_date());
+                    intent.putExtra(BookContent.BookItem.BOOK_URL_IMAGE, aBookItem.getUrl_image());
 
                     mContext.startActivity(intent);
                 }

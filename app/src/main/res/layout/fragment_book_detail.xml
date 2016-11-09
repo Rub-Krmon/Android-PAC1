@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/activity_vertical_margin"
-    tools:context="com.uoc.tfm.pac2.com.uoc.tfm.pac2.BookDetailFragment">
+    tools:context="com.uoc.pac2.BookDetailFragment">
 
     <ImageView
         android:id="@+id/imageView_cover"

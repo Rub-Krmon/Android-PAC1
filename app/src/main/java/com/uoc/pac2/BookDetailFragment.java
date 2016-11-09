@@ -46,12 +46,12 @@ public class BookDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null && getArguments().containsKey(BOOK_POSITION)) {
-            selectedItem = BookContent.ITEMS.get(getArguments().getInt(BOOK_POSITION));
-            mBookCoverEvenOrOdd = getArguments().getInt(BOOK_POSITION) % 2;
-        } else {
-            selectedItem = null;
-        }
+//        if (getArguments() != null && getArguments().containsKey(BOOK_POSITION)) {
+//            selectedItem = BookContent.ITEMS.get(getArguments().getInt(BOOK_POSITION));
+//            mBookCoverEvenOrOdd = getArguments().getInt(BOOK_POSITION) % 2;
+//        } else {
+        selectedItem = null;
+//        }
         if (mListener != null) {
             mListener.onFragmentInteraction();
         }

@@ -1,9 +1,8 @@
 package com.uoc.pac2.model;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import com.orm.SugarRecord;
+
+import java.util.List;
 
 /**
  * @author Ruben Carmona
@@ -17,24 +16,41 @@ import java.util.Date;
  */
 public class BookContent {
 
-    public static final ArrayList<BookItem> ITEMS = new ArrayList<>();
-
-    /*
-    * Variable estática de una lista de elementos
-    * para falsear los datos a mostrar
-    */
-    static {
-        BookItem book1 = new BookItem(0, "Title1", "Author1", new Date(), "Description", null);
-        BookItem book2 = new BookItem(1, "Title2", "Author2", new Date(), "Description 2", null);
-        ITEMS.add(book1);
-        ITEMS.add(book2);
+    public BookContent() {
     }
 
-    public static class BookItem {
-        public int id;
+    public static List<BookItem> getBooks() {
+        // ============ INICI CODI A COMPLETAR ===============
+        return BookItem.listAll(BookItem.class);
+        // ============ FI CODI A COMPLETAR ===============
+    }
+
+    public static boolean exists(BookItem bookItem) {
+        // ============ INICI CODI A COMPLETAR ===============
+        List<BookItem> list = getBooks();
+
+        if (list != null && !list.isEmpty()) {
+            List<BookItem> listOfBooks = BookItem.find(BookItem.class, "title = ? ", bookItem.getTitle());
+            return listOfBooks != null && !listOfBooks.isEmpty();
+        } else {
+            return false;
+        }
+        // ============ FI CODI A COMPLETAR ===============
+    }
+
+    public static class BookItem extends SugarRecord {
+
+        public static final String BOOK_ID = "bookID";
+        public static final String BOOK_TITLE = "bookTitle";
+        public static final String BOOK_AUTHOR = "bookAuthor";
+        public static final String BOOK_PUBLICATION_DATE = "bookPublicationDate";
+        public static final String BOOK_DESCRIPTION = "bookDescription";
+        public static final String BOOK_URL_IMAGE = "bookUrlImage";
+
+        public Long id;
         public String title;
         public String author;
-        public Date publication_date;
+        public String publication_date;
         public String description;
         public String url_image;
 
@@ -42,17 +58,13 @@ public class BookContent {
 
         }
 
-        public BookItem(int pId, String pTitle, String pAuthor, Date pPublishedDate, String pDescription, String pUrlImage) {
+        public BookItem(Long pId, String pTitle, String pAuthor, String pPublishedDate, String pDescription, String pUrlImage) {
             this.id = pId;
             this.title = pTitle;
             this.author = pAuthor;
             this.publication_date = pPublishedDate;
             this.description = pDescription;
             this.url_image = pUrlImage;
-        }
-
-        public int getId() {
-            return id;
         }
 
         public String getTitle() {
@@ -63,7 +75,7 @@ public class BookContent {
             return author;
         }
 
-        public Date getPublication_date() {
+        public String getPublication_date() {
             return publication_date;
         }
 
@@ -75,17 +87,34 @@ public class BookContent {
             return url_image;
         }
 
-        public void setPublication_date(String pString) {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            try {
-                this.publication_date = formatter.parse(pString);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+        public void setPublication_date(String publication_date) {
+            this.publication_date = publication_date;
+//            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+//            try {
+//                this.publication_date = formatter.parse(pString);
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
         }
 
-        public void setId(int id) {
+        public void setId(Long id) {
             this.id = id;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public void setAuthor(String author) {
+            this.author = author;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public void setUrl_image(String url_image) {
+            this.url_image = url_image;
         }
     }
 }

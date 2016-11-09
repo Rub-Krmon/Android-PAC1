@@ -10,16 +10,25 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.uoc.tfm.pac2.com.uoc.tfm.pac2.BookListActivity"
+    tools:context="com.uoc.pac2.BookListActivity"
     tools:showIn="@layout/book_list">
 
 
-    <android.support.v7.widget.RecyclerView
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeLayoutBookList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:padding="3dp"
-        android:id="@+id/recycle_view" />
+        android:layout_below="@+id/toolbar">
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:padding="3dp"
+            android:id="@+id/recycle_view" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 </RelativeLayout>
