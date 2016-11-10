@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.uoc.pac2.model.BookContent;
+import com.uoc.pac2.utils.DownloadImageTask;
 
 /**
  * @author Ruben Carmona
@@ -21,24 +22,24 @@ public class BookDetailFragment extends Fragment {
 
     public static final String BOOK_POSITION = "bookPosition";
 
-    private BookContent.BookItem selectedItem = null;
+    private BookContent.BookItem selectedBook = null;
 
     private OnFragmentInteractionListener mListener;
-
-    /*
-    * Variable temporal para esta entrega que sirve para
-    * mostrar una portada u otra en función de si es par o
-    * impar la posición del elemento en la lista
-    */
-    private int mBookCoverEvenOrOdd = 0;
 
     public BookDetailFragment() {
     }
 
-    public static BookDetailFragment newInstance(int pParam) {
+    public static BookDetailFragment newInstance(BookContent.BookItem pBookItem) {
         BookDetailFragment fragment = new BookDetailFragment();
         Bundle args = new Bundle();
-        args.putInt(BOOK_POSITION, pParam);
+
+        args.putLong(BookContent.BookItem.BOOK_ID, pBookItem.getId());
+        args.putString(BookContent.BookItem.BOOK_AUTHOR, pBookItem.getAuthor());
+        args.putString(BookContent.BookItem.BOOK_TITLE, pBookItem.getTitle());
+        args.putString(BookContent.BookItem.BOOK_DESCRIPTION, pBookItem.getDescription());
+        args.putString(BookContent.BookItem.BOOK_PUBLICATION_DATE, pBookItem.getPublication_date());
+        args.putString(BookContent.BookItem.BOOK_URL_IMAGE, pBookItem.getUrl_image());
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,12 +47,18 @@ public class BookDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null && getArguments().containsKey(BOOK_POSITION)) {
-//            selectedItem = BookContent.ITEMS.get(getArguments().getInt(BOOK_POSITION));
-//            mBookCoverEvenOrOdd = getArguments().getInt(BOOK_POSITION) % 2;
-//        } else {
-        selectedItem = null;
-//        }
+        if (getArguments() != null && getArguments().containsKey(BookContent.BookItem.BOOK_ID)) {
+            selectedBook = new BookContent.BookItem();
+            selectedBook.setId(getArguments().getLong(BookContent.BookItem.BOOK_ID, 0));
+            selectedBook.setAuthor(getArguments().getString(BookContent.BookItem.BOOK_AUTHOR));
+            selectedBook.setTitle(getArguments().getString(BookContent.BookItem.BOOK_TITLE));
+            selectedBook.setDescription(getArguments().getString(BookContent.BookItem.BOOK_DESCRIPTION));
+            selectedBook.setPublication_date(getArguments().getString(BookContent.BookItem.BOOK_PUBLICATION_DATE));
+            selectedBook.setUrl_image(getArguments().getString(BookContent.BookItem.BOOK_URL_IMAGE));
+
+        } else {
+            selectedBook = null;
+        }
         if (mListener != null) {
             mListener.onFragmentInteraction();
         }
@@ -63,11 +70,16 @@ public class BookDetailFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_book_detail, container, false);
 
-        if (selectedItem != null) {
-            ((TextView) v.findViewById(R.id.textView_author)).setText(selectedItem.getAuthor());
-            ((TextView) v.findViewById(R.id.textView_date)).setText(selectedItem.getPublication_date().toString());
-            ((TextView) v.findViewById(R.id.textView_description)).setText(selectedItem.getDescription());
-            ((ImageView) v.findViewById(R.id.imageView_cover)).setImageResource(mBookCoverEvenOrOdd == 0 ? R.drawable.even_cover : R.drawable.odd_cover);
+        if (selectedBook != null) {
+            ((TextView) v.findViewById(R.id.textView_author)).setText(selectedBook.getAuthor());
+            ((TextView) v.findViewById(R.id.textView_date)).setText(selectedBook.getPublication_date().toString());
+            ((TextView) v.findViewById(R.id.textView_description)).setText(selectedBook.getDescription());
+
+            if (selectedBook.getUrl_image() != null && !selectedBook.getUrl_image().isEmpty()) {
+
+                new DownloadImageTask((ImageView) v.findViewById(R.id.imageView_cover))
+                        .execute(selectedBook.getUrl_image());
+            }
         }
 
         return v;

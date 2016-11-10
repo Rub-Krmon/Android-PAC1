@@ -8,13 +8,16 @@
 
     <ImageView
         android:id="@+id/imageView_cover"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/image_max_width"
         android:layout_height="wrap_content"
         android:contentDescription="@string/cover_description"
         android:gravity="top"
         android:padding="5dp"
         android:scaleType="fitStart"
-        app:srcCompat="@drawable/even_cover" />
+        android:adjustViewBounds="true"
+        android:maxWidth="@dimen/image_max_width"
+        app:srcCompat="@android:drawable/ic_menu_report_image"
+        android:minWidth="@dimen/image_max_width" />
 
     <LinearLayout
         android:layout_width="match_parent"

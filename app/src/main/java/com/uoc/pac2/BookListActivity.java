@@ -63,9 +63,11 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        if (findViewById(R.id.content_book_detail) != null) {
+        bookList.addAll(BookContent.getBooks());
+
+        if (findViewById(R.id.content_book_detail) != null && bookList.size() > 0) {
             mTwoPane = true;
-            BookDetailFragment aBookDetailFragment = BookDetailFragment.newInstance(getIntent().getIntExtra(BookDetailFragment.BOOK_POSITION, 0));
+            BookDetailFragment aBookDetailFragment = BookDetailFragment.newInstance(bookList.get(0));
 
             getSupportFragmentManager()
                     .beginTransaction()
@@ -73,7 +75,6 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                     .commit();
         }
 
-        bookList.addAll(BookContent.getBooks());
         adapter = new BookListAdapter(this, bookList);
         recyclerView.setAdapter(adapter);
 

@@ -81,7 +81,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
                 int currentPos = (int) v.getTag();
 
                 if (mTwoPane) {
-                    BookDetailFragment aBookDetailFragment = BookDetailFragment.newInstance(currentPos);
+                    BookDetailFragment aBookDetailFragment = BookDetailFragment.newInstance(mBookItems.get(currentPos));
                     ((AppCompatActivity) mContext).getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.content_book_detail, aBookDetailFragment)
