@@ -89,7 +89,9 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                     public void onRefresh() {
                         if (firebaseUser != null) {
 
-                            //BookContent.BookItem.deleteAll(BookContent.BookItem.class);
+                            BookContent.BookItem.deleteAll(BookContent.BookItem.class);
+                            bookList.clear();
+                            adapter.setBooks(bookList);
                             addValueEventListenerToDatabase();
                         }
                     }
@@ -142,19 +144,25 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
+
                 GenericTypeIndicator<ArrayList<BookContent.BookItem>> typeIndicator = new GenericTypeIndicator<ArrayList<BookContent.BookItem>>() {
                 };
+
                 ArrayList<BookContent.BookItem> listOfBook = dataSnapshot.getValue(typeIndicator);
+                ArrayList<BookContent.BookItem> aBookList = new ArrayList<>();
 
                 for (BookContent.BookItem book : listOfBook) {
 
                     if (!BookContent.exists(book)) {
                         book.save();
-                        bookList.add(book);
                     }
+                    if (book.getId() == null) {
+                        book.setId(Long.valueOf(aBookList.size()));
+                    }
+                    aBookList.add(book);
                 }
 
-                adapter.setBooks(bookList);
+                adapter.setBooks(aBookList);
                 databaseReference.removeEventListener(this);
             }
 

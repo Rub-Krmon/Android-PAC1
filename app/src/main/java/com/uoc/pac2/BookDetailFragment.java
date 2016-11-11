@@ -20,8 +20,6 @@ import com.uoc.pac2.utils.DownloadImageTask;
 
 public class BookDetailFragment extends Fragment {
 
-    public static final String BOOK_POSITION = "bookPosition";
-
     private BookContent.BookItem selectedBook = null;
 
     private OnFragmentInteractionListener mListener;
@@ -33,7 +31,7 @@ public class BookDetailFragment extends Fragment {
         BookDetailFragment fragment = new BookDetailFragment();
         Bundle args = new Bundle();
 
-        args.putLong(BookContent.BookItem.BOOK_ID, pBookItem.getId());
+        args.putLong(BookContent.BookItem.BOOK_ID, pBookItem.getId() != null ? pBookItem.getId() : 0);
         args.putString(BookContent.BookItem.BOOK_AUTHOR, pBookItem.getAuthor());
         args.putString(BookContent.BookItem.BOOK_TITLE, pBookItem.getTitle());
         args.putString(BookContent.BookItem.BOOK_DESCRIPTION, pBookItem.getDescription());
@@ -46,7 +44,9 @@ public class BookDetailFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null && getArguments().containsKey(BookContent.BookItem.BOOK_ID)) {
             selectedBook = new BookContent.BookItem();
             selectedBook.setId(getArguments().getLong(BookContent.BookItem.BOOK_ID, 0));
@@ -72,7 +72,7 @@ public class BookDetailFragment extends Fragment {
 
         if (selectedBook != null) {
             ((TextView) v.findViewById(R.id.textView_author)).setText(selectedBook.getAuthor());
-            ((TextView) v.findViewById(R.id.textView_date)).setText(selectedBook.getPublication_date().toString());
+            ((TextView) v.findViewById(R.id.textView_date)).setText(selectedBook.getPublication_date());
             ((TextView) v.findViewById(R.id.textView_description)).setText(selectedBook.getDescription());
 
             if (selectedBook.getUrl_image() != null && !selectedBook.getUrl_image().isEmpty()) {
