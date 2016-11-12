@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * @author Ruben Carmona
- * @project TFM - PAC1
+ * @project TFM - PAC2
  * @date 10/2016
  */
 
@@ -38,6 +38,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
         this.mBookItems = pBooksItems;
     }
 
+    // Función que nos sirve para modificar la lista de elementos que estamos viendo
     public void setBooks(List<BookContent.BookItem> pNewBooks) {
         this.mBookItems.clear();
         this.mBookItems.addAll(pNewBooks);
@@ -151,8 +152,5 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
             return mView;
         }
 
-        public void setmAuthorView(TextView mAuthorView) {
-            this.mAuthorView = mAuthorView;
-        }
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * @author Ruben Carmona
- * @project TFM - PAC1
+ * @project TFM - PAC2
  * @date 10/2016
  */
 
@@ -19,24 +19,31 @@ public class BookContent {
     public BookContent() {
     }
 
+    //    Función que permite obtener todos los libros de la base de datos local
     public static List<BookItem> getBooks() {
         // ============ INICI CODI A COMPLETAR ===============
         return BookItem.listAll(BookItem.class);
         // ============ FI CODI A COMPLETAR ===============
     }
 
+    // Función para comprobar la existencia o no de un libro dentro de la base de datos
     public static boolean exists(BookItem bookItem) {
         // ============ INICI CODI A COMPLETAR ===============
-        List<BookItem> list = getBooks();
-
-        if (list != null && !list.isEmpty()) {
-            List<BookItem> listOfBooks = BookItem.find(BookItem.class, "title = ? ", bookItem.getTitle());
-            return listOfBooks != null && !listOfBooks.isEmpty();
-        } else {
+        List<BookItem> listOfBooks = BookItem.find(BookItem.class, "title = ? ", bookItem.getTitle());
+        if (listOfBooks == null) {
             return false;
+        } else {
+            return !listOfBooks.isEmpty();
         }
+
         // ============ FI CODI A COMPLETAR ===============
     }
+
+
+    // Se ha hecho que el objeto BookItem extienda de SugarRecord
+    // y se ha cambiado el atributo publication_date para ser String
+    // en vez de Date para coincidir con el formato con el que está guardado
+    // el valor en la base de datos Firebase
 
     public static class BookItem extends SugarRecord {
 
@@ -89,12 +96,6 @@ public class BookContent {
 
         public void setPublication_date(String publication_date) {
             this.publication_date = publication_date;
-//            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-//            try {
-//                this.publication_date = formatter.parse(pString);
-//            } catch (ParseException e) {
-//                e.printStackTrace();
-//            }
         }
 
         public void setId(Long id) {

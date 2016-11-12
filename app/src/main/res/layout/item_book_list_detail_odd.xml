@@ -26,6 +26,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:paddingLeft="@dimen/text_left_margin"
+            android:paddingStart="@dimen/text_left_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
             android:text="@string/title_default_text"
             android:maxLines="2"

@@ -14,10 +14,19 @@ import com.uoc.pac2.utils.DownloadImageTask;
 
 /**
  * @author Ruben Carmona
- * @project TFM - PAC1
+ * @project TFM - PAC2
  * @date 10/2016
  */
 
+//    Actividad de detalle de un libro en el que se recibe
+//    como información dentro del Extra del intent todos las
+//    atributos que conforman un objeto BookItem para ser
+//    mostrados en el layout.
+
+//    En caso de en la información venga la URL de la imagen de
+//    la portada del libro, se ejecutará la tarea asíncrona
+//    DownloadImageTask que será la encargada de actualizar
+//    el imageView relacionado.
 public class BookDetailActivity extends AppCompatActivity {
 
     @Override
@@ -38,10 +47,10 @@ public class BookDetailActivity extends AppCompatActivity {
         selectedBook.setPublication_date(getIntent().getStringExtra(BookContent.BookItem.BOOK_PUBLICATION_DATE));
         selectedBook.setUrl_image(getIntent().getStringExtra(BookContent.BookItem.BOOK_URL_IMAGE));
 
-        if (selectedBook != null && selectedBook.getTitle() != null && !selectedBook.getTitle().isEmpty()) {
+        if ( selectedBook.getTitle() != null && !selectedBook.getTitle().isEmpty()) {
             setTitle(selectedBook.getTitle());
             ((TextView) findViewById(R.id.textView_author)).setText(selectedBook.getAuthor());
-            ((TextView) findViewById(R.id.textView_date)).setText(selectedBook.getPublication_date().toString());
+            ((TextView) findViewById(R.id.textView_date)).setText(selectedBook.getPublication_date());
             ((TextView) findViewById(R.id.textView_description)).setText(selectedBook.getDescription());
 
             if ( selectedBook.getUrl_image() != null && !selectedBook.getUrl_image().isEmpty()) {

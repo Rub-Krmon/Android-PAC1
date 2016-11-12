@@ -6,10 +6,13 @@ import com.uoc.pac2.R;
 
 /**
  * @author Ruben Carmona
- * @project TFM - PAC1
+ * @project TFM - PAC2
  * @date 10/2016
  */
 
+// Enumeración que nos permite detectar fácilmente si
+// el dispositivo en el que estamos ejecutando la aplicación
+// es un teléfono o una tablet
 public enum DeviceType {
     TABLET, PHONE;
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.uoc.tfm.pac2.BookListActivity">
+    tools:context="com.uoc.pac2.BookListActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -25,11 +25,12 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize">
+        android:layout_marginTop="?attr/actionBarSize"
+        android:baselineAligned="false">
 
         <include
             layout="@layout/content_book_list"
-            android:id="@+id/include"
+            android:id="@+id/content_book_list"
             android:layout_width="512dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />

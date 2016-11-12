@@ -32,7 +32,7 @@ import java.util.ArrayList;
 
 /**
  * @author Ruben Carmona
- * @project TFM - PAC1
+ * @project TFM - PAC2
  * @date 10/2016
  */
 
@@ -41,16 +41,18 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
     private final String TAG = this.getClass().getCanonicalName();
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    BookListAdapter adapter;
-    boolean mTwoPane = false;
-    FirebaseAuth mAuth = null;
-    ArrayList<BookContent.BookItem> bookList = new ArrayList<>();
-    DatabaseReference databaseReference;
-    FirebaseUser firebaseUser;
+    private BookListAdapter adapter;
+    private ArrayList<BookContent.BookItem> bookList = new ArrayList<>();
+
+    private FirebaseAuth mAuth = null;
+    private FirebaseUser firebaseUser;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        boolean mTwoPane = false;
+
         setContentView(R.layout.book_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -76,6 +78,7 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
         }
 
         adapter = new BookListAdapter(this, bookList);
+        adapter.setmTwoPane(mTwoPane);
         recyclerView.setAdapter(adapter);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayoutBookList);
@@ -155,6 +158,8 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
 
                     if (!BookContent.exists(book)) {
                         book.save();
+                    } else {
+                        book.update();
                     }
                     if (book.getId() == null) {
                         book.setId(Long.valueOf(aBookList.size()));

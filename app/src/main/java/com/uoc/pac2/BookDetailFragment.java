@@ -14,9 +14,13 @@ import com.uoc.pac2.utils.DownloadImageTask;
 
 /**
  * @author Ruben Carmona
- * @project TFM - PAC1
+ * @project TFM - PAC2
  * @date 10/2016
  */
+
+//    Fragment que se utiliza para mostrar el detalle de un BookItem
+//    recibe como parámetro un BookItem en su constructora, y añade
+//    sus atributos como argumentos para el frament y ser mostrados.
 
 public class BookDetailFragment extends Fragment {
 
@@ -42,6 +46,9 @@ public class BookDetailFragment extends Fragment {
         return fragment;
     }
 
+//    En caso de que se reciban argumetos, estos se incluyen en el objeto BookItem
+//    selectedBook para su posterior consulta.
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -64,6 +71,9 @@ public class BookDetailFragment extends Fragment {
         }
     }
 
+//    En caso de que la URL de la imagen esté informada, se hace uso de la tarea
+//    asíncrona DonwloadImageTask para realizar la descarga de la imagen asociada
+//    en paralelo.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
