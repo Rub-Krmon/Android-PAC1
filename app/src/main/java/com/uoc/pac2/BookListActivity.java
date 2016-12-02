@@ -30,6 +30,9 @@ import com.uoc.pac2.model.BookContent;
 
 import java.util.ArrayList;
 
+import static android.content.Intent.ACTION_DELETE;
+import static com.uoc.pac2.utils.Constants.ACTION_VIEW_BOOK_DETAIL;
+
 /**
  * @author Ruben Carmona
  * @project TFM - PAC2
@@ -65,8 +68,11 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        bookList.addAll(BookContent.getBooks());
+        try {
+            bookList.addAll(BookContent.getBooks());
+        } catch (Exception e) {
 
+        }
         if (findViewById(R.id.content_book_detail) != null && bookList.size() > 0) {
             mTwoPane = true;
             BookDetailFragment aBookDetailFragment = BookDetailFragment.newInstance(bookList.get(0));
@@ -108,6 +114,16 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                         .setAction("Action", null).show();
             }
         });
+
+        if (getIntent() != null && getIntent().getAction() != null) {
+            if (getIntent().getAction().equalsIgnoreCase(ACTION_DELETE)) {
+                // Acción eliminar de la notificación recibida
+                Toast.makeText(BookListActivity.this, "Acción eliminar", Toast.LENGTH_SHORT).show();
+            } else if (getIntent().getAction().equalsIgnoreCase(ACTION_VIEW_BOOK_DETAIL)) {
+                // Acción reenviar de la notificación recibida
+                Toast.makeText(BookListActivity.this, "Acción reenviar", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void firebaseLogin() {

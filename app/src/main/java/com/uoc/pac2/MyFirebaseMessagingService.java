@@ -4,12 +4,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import static android.content.Intent.ACTION_DELETE;
+import static com.uoc.pac2.utils.Constants.ACTION_VIEW_BOOK_DETAIL;
 
 /**
  * @author Ruben Carmona
@@ -38,23 +39,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * @param messageBody Texto a mostrar en la notificación
      */
     private void sendNotification(String messageBody) {
+
         Intent intent = new Intent(this, BookListActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+        intent.setAction(ACTION_DELETE);
+        PendingIntent borrarIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+        Intent intent2 = new Intent(this, BookListActivity.class);
+        intent2.setAction(ACTION_VIEW_BOOK_DETAIL);
+        PendingIntent resendIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent2, 0);
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Ejemplo Firebase")
-                .setContentText(messageBody)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_pages_black)
+                        .setContentTitle("Mi primera notificación")
+                        .setContentText("Hola mundo")
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText("Estos son los detalles expandidos de la notificación anterior, aquí se puede escribir más texto para que lo lea el usuario."))
+                        .addAction(new NotificationCompat.Action(android.R.drawable.ic_menu_delete, "Borrar", borrarIntent))
+                        .addAction(new NotificationCompat.Action(R.drawable.ic_book_black, "View Book", resendIntent));
 
-        NotificationManager notificationManager =
+        NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(0, notificationBuilder.build());
+        // Mostrar la notificación
+        mNotificationManager.notify(0, mBuilder.build());
     }
 }

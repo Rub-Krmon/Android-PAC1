@@ -15,4 +15,6 @@
     <!-- Firebase user data access -->
     <string name="firebase_username">rcarmonaz@uoc.edu</string>
     <string name="firebase_password">123456</string>
+
+    <string name="ACTION_VIEW_BOOK_DETAIL">VIEW_BOOK_DETAIL</string>
 </resources>
