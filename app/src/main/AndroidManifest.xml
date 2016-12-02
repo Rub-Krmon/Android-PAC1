@@ -38,6 +38,12 @@
             android:name="com.uoc.pac2.BookDetailActivity"
             android:label="@string/title_activity_book_detail"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <service android:name="com.uoc.pac2.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
