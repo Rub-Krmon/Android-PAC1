@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,7 +52,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import static android.content.Intent.ACTION_DELETE;
-import static android.support.v4.content.FileProvider.getUriForFile;
 import static com.uoc.pac2.utils.Constants.ACTION_VIEW_BOOK_DETAIL;
 
 /**
@@ -64,13 +64,13 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
 
     private final String TAG = this.getClass().getCanonicalName();
     boolean mTwoPane = false;
+    ClipboardManager clipboard;
     private SwipeRefreshLayout swipeRefreshLayout;
     private BookListAdapter adapter;
     private ArrayList<BookContent.BookItem> bookList = new ArrayList<>();
     private FirebaseAuth mAuth = null;
     private FirebaseUser firebaseUser;
     private DatabaseReference databaseReference;
-    ClipboardManager clipboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,12 +175,15 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_default_user);
                                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                    stream.flush();
+                                    stream.close();
 
                                     outputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
                                     outputStream.write(stream.toByteArray());
+                                    outputStream.flush();
                                     outputStream.close();
                                     //imageUri = Uri.fromFile(imageFile);
-                                    imageUri = getUriForFile(getApplicationContext(), "com.uoc.pac2.fileprovider", imageFile);
+                                    imageUri = FileProvider.getUriForFile(getApplicationContext(), "com.uoc.pac2.fileprovider", imageFile);
 
                                 } catch (NullPointerException e) {
                                     e.printStackTrace();
@@ -195,12 +198,13 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                                 sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                 sendIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                                 sendIntent.setType("image/*");
+                                sendIntent.setDataAndType(imageUri, getContentResolver().getType(imageUri));
 
                                 if (drawerItem.getIdentifier() == 3) {
                                     sendIntent.setPackage("com.whatsapp");
                                 }
 
-                                 startActivity(Intent.createChooser(sendIntent, getResources().getString(R.string.drawer_item_other_apps)));
+                                startActivity(Intent.createChooser(sendIntent, getResources().getString(R.string.drawer_item_other_apps)));
                                 //startActivityForResult(Intent.createChooser(sendIntent, getResources().getString(R.string.drawer_item_other_apps)), 1);
                                 break;
                         }

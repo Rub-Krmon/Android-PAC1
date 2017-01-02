@@ -16,7 +16,7 @@
     <string name="common_message_received">Message Received</string>
     <string name="common_message_title">Default Title</string>
     <string name="common_message_delete_ok">Book deleted from local storage</string>
-    <string name="common_message_buy_ok">Book's purchase has been processed</string>
+    <string name="common_message_buy_ok">Book\'s purchase has been processed</string>
 
     <!-- Error messages -->
     <string name="error_message_no_book_position_received">No book position received</string>
