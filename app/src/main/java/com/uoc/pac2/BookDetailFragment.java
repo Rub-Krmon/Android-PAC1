@@ -14,7 +14,7 @@ import com.uoc.pac2.utils.DownloadImageTask;
 
 /**
  * @author Ruben Carmona
- * @project TFM - PAC3
+ * @project TFM - PAC4
  * @date 10/2016
  */
 

@@ -56,7 +56,7 @@ import static com.uoc.pac2.utils.Constants.ACTION_VIEW_BOOK_DETAIL;
 
 /**
  * @author Ruben Carmona
- * @project TFM - PAC3
+ * @project TFM - PAC4
  * @date 10/2016
  */
 
