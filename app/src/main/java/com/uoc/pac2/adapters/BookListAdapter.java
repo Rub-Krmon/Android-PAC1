@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * @author Ruben Carmona
- * @project TFM - PAC2
+ * @project TFM - PAC3
  * @date 10/2016
  */
 
@@ -42,6 +42,12 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
     public void setBooks(List<BookContent.BookItem> pNewBooks) {
         this.mBookItems.clear();
         this.mBookItems.addAll(pNewBooks);
+        this.notifyDataSetChanged();
+    }
+
+    // Función para devolver la lista que está
+    public void removeBookItem(int pBookPosition) {
+        mBookItems.remove(pBookPosition);
         this.notifyDataSetChanged();
     }
 

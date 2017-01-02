@@ -6,7 +6,7 @@ import com.uoc.pac2.R;
 
 /**
  * @author Ruben Carmona
- * @project TFM - PAC2
+ * @project TFM - PAC3
  * @date 10/2016
  */
 

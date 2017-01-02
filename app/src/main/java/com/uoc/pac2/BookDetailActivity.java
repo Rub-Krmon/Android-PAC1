@@ -1,20 +1,24 @@
 package com.uoc.pac2;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.uoc.pac2.model.BookContent;
 import com.uoc.pac2.utils.DownloadImageTask;
 
 /**
  * @author Ruben Carmona
- * @project TFM - PAC2
+ * @project TFM - PAC3
  * @date 10/2016
  */
 
@@ -28,6 +32,9 @@ import com.uoc.pac2.utils.DownloadImageTask;
 //    DownloadImageTask que será la encargada de actualizar
 //    el imageView relacionado.
 public class BookDetailActivity extends AppCompatActivity {
+
+    WebView webView;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,27 +54,49 @@ public class BookDetailActivity extends AppCompatActivity {
         selectedBook.setPublication_date(getIntent().getStringExtra(BookContent.BookItem.BOOK_PUBLICATION_DATE));
         selectedBook.setUrl_image(getIntent().getStringExtra(BookContent.BookItem.BOOK_URL_IMAGE));
 
-        if ( selectedBook.getTitle() != null && !selectedBook.getTitle().isEmpty()) {
+        if (selectedBook.getTitle() != null && !selectedBook.getTitle().isEmpty()) {
             setTitle(selectedBook.getTitle());
             ((TextView) findViewById(R.id.textView_author)).setText(selectedBook.getAuthor());
             ((TextView) findViewById(R.id.textView_date)).setText(selectedBook.getPublication_date());
             ((TextView) findViewById(R.id.textView_description)).setText(selectedBook.getDescription());
 
-            if ( selectedBook.getUrl_image() != null && !selectedBook.getUrl_image().isEmpty()) {
+            if (selectedBook.getUrl_image() != null && !selectedBook.getUrl_image().isEmpty()) {
 
                 new DownloadImageTask((ImageView) findViewById(R.id.imageView_cover))
                         .execute(selectedBook.getUrl_image());
             }
 
         }
+        // Get the WebView
+        webView = (WebView) findViewById(R.id.web_view);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.setVisibility(View.GONE);
+        webView.loadUrl("file:///android_asset/form.html");
+        webView.setWebViewClient(new MyAppWebViewClient());
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                webView.loadUrl("file:///android_asset/form.html");
+                webView.setVisibility(View.VISIBLE);
+                fab.setVisibility(View.GONE);
             }
         });
+    }
+
+    class MyAppWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            if (TextUtils.isEmpty(Uri.parse(url).getQueryParameter("name")) || TextUtils.isEmpty(Uri.parse(url).getQueryParameter("num")) || TextUtils.isEmpty(Uri.parse(url).getQueryParameter("date"))) {
+                Toast.makeText(BookDetailActivity.this, R.string.error_empty_form_fields, Toast.LENGTH_LONG).show();
+            } else {
+                webView.setVisibility(View.GONE);
+                fab.setVisibility(View.VISIBLE);
+                Toast.makeText(BookDetailActivity.this, R.string.common_message_buy_ok, Toast.LENGTH_LONG).show();
+            }
+
+            return false;
+        }
     }
 }

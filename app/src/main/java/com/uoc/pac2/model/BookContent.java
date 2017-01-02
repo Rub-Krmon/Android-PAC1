@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * @author Ruben Carmona
- * @project TFM - PAC2
+ * @project TFM - PAC3
  * @date 10/2016
  */
 
@@ -37,6 +37,10 @@ public class BookContent {
         }
 
         // ============ FI CODI A COMPLETAR ===============
+    }
+
+    public static void removeBookItem(Integer bookPostion) {
+        BookItem.delete(getBooks().get(bookPostion));
     }
 
 

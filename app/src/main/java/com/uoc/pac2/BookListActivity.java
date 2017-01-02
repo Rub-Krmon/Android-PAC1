@@ -1,9 +1,15 @@
 package com.uoc.pac2;
 
+import android.app.NotificationManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,37 +30,53 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.orm.SugarContext;
 import com.uoc.pac2.adapters.BookListAdapter;
 import com.uoc.pac2.model.BookContent;
+import com.uoc.pac2.utils.Constants;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static android.content.Intent.ACTION_DELETE;
+import static android.support.v4.content.FileProvider.getUriForFile;
 import static com.uoc.pac2.utils.Constants.ACTION_VIEW_BOOK_DETAIL;
 
 /**
  * @author Ruben Carmona
- * @project TFM - PAC2
+ * @project TFM - PAC3
  * @date 10/2016
  */
 
 public class BookListActivity extends AppCompatActivity implements BookDetailFragment.OnFragmentInteractionListener {
 
     private final String TAG = this.getClass().getCanonicalName();
+    boolean mTwoPane = false;
     private SwipeRefreshLayout swipeRefreshLayout;
-
     private BookListAdapter adapter;
     private ArrayList<BookContent.BookItem> bookList = new ArrayList<>();
-
     private FirebaseAuth mAuth = null;
     private FirebaseUser firebaseUser;
     private DatabaseReference databaseReference;
+    ClipboardManager clipboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        boolean mTwoPane = false;
+
+        final CharSequence pasteData = getResources().getText(R.string.text_to_share);
 
         setContentView(R.layout.book_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -71,7 +93,7 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
         try {
             bookList.addAll(BookContent.getBooks());
         } catch (Exception e) {
-
+            Log.e(TAG, e.getLocalizedMessage());
         }
         if (findViewById(R.id.content_book_detail) != null && bookList.size() > 0) {
             mTwoPane = true;
@@ -97,7 +119,6 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                     @Override
                     public void onRefresh() {
                         if (firebaseUser != null) {
-
                             BookContent.BookItem.deleteAll(BookContent.BookItem.class);
                             bookList.clear();
                             adapter.setBooks(bookList);
@@ -106,48 +127,111 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                     }
                 });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
-        if (getIntent() != null && getIntent().getAction() != null) {
-            if (getIntent().getAction().equalsIgnoreCase(ACTION_DELETE)) {
-                // Acción eliminar de la notificación recibida
-                Toast.makeText(BookListActivity.this, "Acción eliminar", Toast.LENGTH_SHORT).show();
-            } else if (getIntent().getAction().equalsIgnoreCase(ACTION_VIEW_BOOK_DETAIL)) {
-                // Acción reenviar de la notificación recibida
-                Toast.makeText(BookListActivity.this, "Acción reenviar", Toast.LENGTH_SHORT).show();
-            }
-        }
+//if you want to update the items at a later time it is recommended to keep it in a variable
+        SecondaryDrawerItem item1 = new SecondaryDrawerItem().withIdentifier(1).withName(R.string.drawer_item_other_apps).withTag("");
+        SecondaryDrawerItem item2 = new SecondaryDrawerItem().withIdentifier(2).withName(R.string.drawer_item_copy_clipboard);
+        SecondaryDrawerItem item3 = new SecondaryDrawerItem().withIdentifier(3).withName(R.string.drawer_item_whatsapp);
+
+// Create the AccountHeader
+        AccountHeader headerResult = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.color.lightBackground)
+                .addProfiles(
+                        new ProfileDrawerItem().withName(getResources().getString(R.string.firebase_username)).withEmail(getResources().getString(R.string.firebase_email)).withIcon(getResources().getDrawable(R.drawable.ic_default_user))
+                )
+                .build();
+//create the drawer and remember the `Drawer` result object
+        Drawer result = new DrawerBuilder()
+                .withAccountHeader(headerResult)
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .addDrawerItems(
+                        item1,
+                        new DividerDrawerItem(),
+                        item2,
+                        new DividerDrawerItem(),
+                        item3
+                )
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+
+                        switch ((int) drawerItem.getIdentifier()) {
+                            case 2:
+                                ClipData clipData = ClipData.newPlainText(pasteData, pasteData);
+                                clipboard.setPrimaryClip(clipData);
+                                Toast.makeText(BookListActivity.this, clipboard.getPrimaryClip().getItemAt(0).getText(), Toast.LENGTH_SHORT).show();
+                                break;
+                            default:
+                                Uri imageUri = null;
+                                String fileName = "sharedImage.png";
+                                File imagePath = new File(getApplicationContext().getFilesDir(), "images");
+                                File imageFile = new File(imagePath, fileName);
+                                try {
+                                    FileOutputStream outputStream;
+
+                                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_default_user);
+                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+                                    outputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
+                                    outputStream.write(stream.toByteArray());
+                                    outputStream.close();
+                                    //imageUri = Uri.fromFile(imageFile);
+                                    imageUri = getUriForFile(getApplicationContext(), "com.uoc.pac2.fileprovider", imageFile);
+
+                                } catch (NullPointerException e) {
+                                    e.printStackTrace();
+                                } catch (FileNotFoundException e) {
+                                    e.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                                sendIntent.putExtra(Intent.EXTRA_TEXT, getResources().getText(R.string.drawer_item_other_apps));
+                                sendIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                                sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                sendIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                                sendIntent.setType("image/*");
+
+                                if (drawerItem.getIdentifier() == 3) {
+                                    sendIntent.setPackage("com.whatsapp");
+                                }
+
+                                 startActivity(Intent.createChooser(sendIntent, getResources().getString(R.string.drawer_item_other_apps)));
+                                //startActivityForResult(Intent.createChooser(sendIntent, getResources().getString(R.string.drawer_item_other_apps)), 1);
+                                break;
+                        }
+                        return false;
+                    }
+                })
+                .build();
     }
 
     private void firebaseLogin() {
         mAuth = FirebaseAuth.getInstance();
 
-        mAuth.signInWithEmailAndPassword(this.getString(R.string.firebase_username), this.getString(R.string.firebase_password)).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        mAuth.signInWithEmailAndPassword(this.getString(R.string.firebase_email), this.getString(R.string.firebase_password)).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if (!task.isSuccessful()) {
-                    Log.w(TAG, "signInWithEmail:failed", task.getException());
-                    Toast.makeText(BookListActivity.this, R.string.firebase_username, Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "signInWithEmail:failed", task.getException());
+                    Toast.makeText(BookListActivity.this, R.string.firebase_email, Toast.LENGTH_SHORT).show();
                     adapter.setBooks(BookContent.getBooks());
 
                 } else {
                     firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                     if (firebaseUser != null) {
-                        System.out.println("Logged");
+                        Log.i(TAG, "Logged");
                         databaseReference = FirebaseDatabase.getInstance().getReference("books");
 
                         addValueEventListenerToDatabase();
                     } else {
                         Log.w(TAG, "signInWithEmail:failed", task.getException());
-                        Toast.makeText(BookListActivity.this, R.string.firebase_username, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BookListActivity.this, R.string.firebase_email, Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -189,7 +273,7 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
+                Log.e(TAG, "The read failed: " + databaseError.getCode());
                 adapter.setBooks(BookContent.getBooks());
                 databaseReference.removeEventListener(this);
             }
@@ -202,4 +286,66 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
             adapter.setmTwoPane(true);
         }
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getAction() != null) {
+            if (intent.getAction().equalsIgnoreCase(ACTION_DELETE)) {
+                // Eliminamos la notifcación mostrada
+                NotificationManager mNotificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                mNotificationManager.cancel(Constants.NOTIFICATION_ID);
+
+                Integer bookPostion = Integer.valueOf(intent.getStringExtra(Constants.BOOK_POSITION));
+                String toastDeleteMessage = intent.getStringExtra(Constants.TOAST_DELETE_MESSAGE);
+
+                if (bookPostion > -1 && adapter.getItemCount() > bookPostion) {
+                    BookContent.removeBookItem(bookPostion);
+                    adapter.removeBookItem(bookPostion);
+                    Toast.makeText(BookListActivity.this, toastDeleteMessage, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(BookListActivity.this, getString(R.string.error_message_delete_book), Toast.LENGTH_LONG).show();
+                }
+
+            } else if (intent.getAction().equalsIgnoreCase(ACTION_VIEW_BOOK_DETAIL)) {
+
+                // Eliminamos la notifcación mostrada
+                NotificationManager mNotificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                mNotificationManager.cancel(Constants.NOTIFICATION_ID);
+
+                // Acción de visualizar un libro recibida
+                Integer bookPostion = Integer.valueOf(intent.getStringExtra(Constants.BOOK_POSITION));
+
+                if (bookPostion > -1 && adapter.getItemCount() > bookPostion) {
+
+                    if (mTwoPane) {
+                        BookDetailFragment aBookDetailFragment = BookDetailFragment.newInstance(bookList.get(bookPostion));
+
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.content_book_detail, aBookDetailFragment)
+                                .commit();
+                    } else {
+                        BookContent.BookItem aBookItem = bookList.get(bookPostion);
+                        Intent intentBookDetail = new Intent(getApplicationContext(), BookDetailActivity.class);
+                        intentBookDetail.putExtra(BookContent.BookItem.BOOK_ID, aBookItem.getId());
+                        intentBookDetail.putExtra(BookContent.BookItem.BOOK_AUTHOR, aBookItem.getAuthor());
+                        intentBookDetail.putExtra(BookContent.BookItem.BOOK_TITLE, aBookItem.getTitle());
+                        intentBookDetail.putExtra(BookContent.BookItem.BOOK_DESCRIPTION, aBookItem.getDescription());
+                        intentBookDetail.putExtra(BookContent.BookItem.BOOK_PUBLICATION_DATE, aBookItem.getPublication_date());
+                        intentBookDetail.putExtra(BookContent.BookItem.BOOK_URL_IMAGE, aBookItem.getUrl_image());
+
+                        startActivity(intentBookDetail);
+                    }
+                } else {
+                    Toast.makeText(BookListActivity.this, getString(R.string.error_message_delete_book), Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
 }
