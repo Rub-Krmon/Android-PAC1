@@ -25,7 +25,17 @@
         android:layout_toEndOf="@id/imageView_cover"
         android:layout_toRightOf="@id/imageView_cover"
         android:orientation="vertical"
-        android:padding="@dimen/text_left_margin">
+        android:padding="@dimen/text_left_margin"
+        android:id="@+id/linearLayout">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fragment_fab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            app:layout_anchor="@id/app_bar"
+            app:srcCompat="@android:drawable/btn_star"
+            android:layout_gravity="end" />
 
         <TextView
             android:id="@+id/textView_author"
@@ -50,5 +60,16 @@
             android:paddingBottom="@dimen/text_bottom_margin"
             android:text="@string/title_book_detail" />
 
+
     </LinearLayout>
+
+    <WebView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/fragment_web_view">
+
+    </WebView>
+
 </RelativeLayout>

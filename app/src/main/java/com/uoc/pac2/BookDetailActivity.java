@@ -33,8 +33,8 @@ import com.uoc.pac2.utils.DownloadImageTask;
 //    el imageView relacionado.
 public class BookDetailActivity extends AppCompatActivity {
 
-    WebView webView;
-    FloatingActionButton fab;
+    private WebView webView;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,13 +1,19 @@
 package com.uoc.pac2;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.uoc.pac2.model.BookContent;
 import com.uoc.pac2.utils.DownloadImageTask;
@@ -27,6 +33,8 @@ public class BookDetailFragment extends Fragment {
     private BookContent.BookItem selectedBook = null;
 
     private OnFragmentInteractionListener mListener;
+    private WebView webView;
+    private FloatingActionButton fab;
 
     public BookDetailFragment() {
     }
@@ -69,9 +77,10 @@ public class BookDetailFragment extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction();
         }
+
     }
 
-//    En caso de que la URL de la imagen esté informada, se hace uso de la tarea
+    //    En caso de que la URL de la imagen esté informada, se hace uso de la tarea
 //    asíncrona DonwloadImageTask para realizar la descarga de la imagen asociada
 //    en paralelo.
     @Override
@@ -91,6 +100,23 @@ public class BookDetailFragment extends Fragment {
                         .execute(selectedBook.getUrl_image());
             }
         }
+        // Get the WebView
+        webView = (WebView) v.findViewById(R.id.fragment_web_view);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.setVisibility(View.GONE);
+        webView.loadUrl("file:///android_asset/form.html");
+        webView.setWebViewClient(new MyAppWebViewClient());
+
+        fab = (FloatingActionButton) v.findViewById(R.id.fragment_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                webView.loadUrl("file:///android_asset/form.html");
+                webView.setVisibility(View.VISIBLE);
+                fab.setVisibility(View.GONE);
+            }
+        });
+
 
         return v;
     }
@@ -117,5 +143,20 @@ public class BookDetailFragment extends Fragment {
     */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction();
+    }
+
+    class MyAppWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            if (TextUtils.isEmpty(Uri.parse(url).getQueryParameter("name")) || TextUtils.isEmpty(Uri.parse(url).getQueryParameter("num")) || TextUtils.isEmpty(Uri.parse(url).getQueryParameter("date"))) {
+                Toast.makeText(BookDetailFragment.this.getActivity(), R.string.error_empty_form_fields, Toast.LENGTH_LONG).show();
+            } else {
+                webView.setVisibility(View.GONE);
+                fab.setVisibility(View.VISIBLE);
+                Toast.makeText(BookDetailFragment.this.getActivity(), R.string.common_message_buy_ok, Toast.LENGTH_LONG).show();
+            }
+
+            return false;
+        }
     }
 }

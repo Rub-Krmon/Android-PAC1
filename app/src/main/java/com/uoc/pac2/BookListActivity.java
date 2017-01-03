@@ -9,8 +9,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -103,6 +103,7 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                     .beginTransaction()
                     .replace(R.id.content_book_detail, aBookDetailFragment)
                     .commit();
+
         }
 
         adapter = new BookListAdapter(this, bookList);
@@ -166,9 +167,9 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                                 break;
                             default:
                                 Uri imageUri = null;
-                                String fileName = "sharedImage.png";
-                                File imagePath = new File(getApplicationContext().getFilesDir(), "images");
-                                File imageFile = new File(imagePath, fileName);
+
+                                String imagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + "sharedImage.png";
+                                File imageToShare = new File(imagePath);
                                 try {
                                     FileOutputStream outputStream;
 
@@ -178,12 +179,11 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                                     stream.flush();
                                     stream.close();
 
-                                    outputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
+                                    outputStream = new FileOutputStream(imageToShare);
                                     outputStream.write(stream.toByteArray());
                                     outputStream.flush();
                                     outputStream.close();
-                                    //imageUri = Uri.fromFile(imageFile);
-                                    imageUri = FileProvider.getUriForFile(getApplicationContext(), "com.uoc.pac2.fileprovider", imageFile);
+                                    imageUri = Uri.fromFile(imageToShare);
 
                                 } catch (NullPointerException e) {
                                     e.printStackTrace();
@@ -196,16 +196,13 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                                 sendIntent.putExtra(Intent.EXTRA_TEXT, getResources().getText(R.string.drawer_item_other_apps));
                                 sendIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
                                 sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                sendIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                                 sendIntent.setType("image/*");
-                                sendIntent.setDataAndType(imageUri, getContentResolver().getType(imageUri));
 
                                 if (drawerItem.getIdentifier() == 3) {
                                     sendIntent.setPackage("com.whatsapp");
                                 }
 
                                 startActivity(Intent.createChooser(sendIntent, getResources().getString(R.string.drawer_item_other_apps)));
-                                //startActivityForResult(Intent.createChooser(sendIntent, getResources().getString(R.string.drawer_item_other_apps)), 1);
                                 break;
                         }
                         return false;
@@ -351,5 +348,4 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
             }
         }
     }
-
 }

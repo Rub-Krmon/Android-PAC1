@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,6 +79,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
     public void onBindViewHolder(BookListAdapter.ViewHolder pHolder, final int pPosition) {
 
         pHolder.getmView().setTag(pPosition);
+        Log.d("BookListAdapter", String.valueOf(pPosition));
 
         pHolder.setmItem(mBookItems.get(pPosition));
         pHolder.getmTitleView().setText(mBookItems.get(pPosition).getTitle());
