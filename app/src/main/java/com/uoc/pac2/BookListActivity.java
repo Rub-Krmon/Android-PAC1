@@ -44,11 +44,8 @@ import com.uoc.pac2.adapters.BookListAdapter;
 import com.uoc.pac2.model.BookContent;
 import com.uoc.pac2.utils.Constants;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import static android.content.Intent.ACTION_DELETE;
@@ -168,34 +165,38 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                             default:
                                 Uri imageUri = null;
 
-                                String imagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + "sharedImage.png";
-                                File imageToShare = new File(imagePath);
+                                String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
+                                File sharedDir = new File(root + File.separator + "shared_images");
+
+                                if (!sharedDir.exists()) {
+                                    sharedDir.mkdirs();
+                                }
+
+                                String sharedImageName = "sharedImage.png";
+                                File sharedImageFile = new File(sharedDir, sharedImageName);
+
+                                if (sharedImageFile.exists())
+                                    sharedImageFile.delete();
+
                                 try {
-                                    FileOutputStream outputStream;
+                                    FileOutputStream fileOutputStream = new FileOutputStream(sharedImageFile);
 
                                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_default_user);
-                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                                    stream.flush();
-                                    stream.close();
+                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+                                    fileOutputStream.flush();
+                                    fileOutputStream.close();
 
-                                    outputStream = new FileOutputStream(imageToShare);
-                                    outputStream.write(stream.toByteArray());
-                                    outputStream.flush();
-                                    outputStream.close();
-                                    imageUri = Uri.fromFile(imageToShare);
+                                    imageUri = Uri.fromFile(sharedImageFile);
 
-                                } catch (NullPointerException e) {
-                                    e.printStackTrace();
-                                } catch (FileNotFoundException e) {
-                                    e.printStackTrace();
-                                } catch (IOException e) {
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
+
                                 Intent sendIntent = new Intent(Intent.ACTION_SEND);
                                 sendIntent.putExtra(Intent.EXTRA_TEXT, getResources().getText(R.string.drawer_item_other_apps));
                                 sendIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
                                 sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
                                 sendIntent.setType("image/*");
 
                                 if (drawerItem.getIdentifier() == 3) {
