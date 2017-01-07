@@ -100,7 +100,8 @@ public class BookDetailFragment extends Fragment {
                         .execute(selectedBook.getUrl_image());
             }
         }
-        // Get the WebView
+
+        // Obtenemos la referencia al webview
         webView = (WebView) v.findViewById(R.id.fragment_web_view);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setVisibility(View.GONE);

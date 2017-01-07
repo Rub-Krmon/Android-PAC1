@@ -67,7 +67,8 @@ public class BookDetailActivity extends AppCompatActivity {
             }
 
         }
-        // Get the WebView
+
+        // Obtenemos la referencia al webview del layout
         webView = (WebView) findViewById(R.id.web_view);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setVisibility(View.GONE);

@@ -1,16 +1,21 @@
 package com.uoc.pac2;
 
+import android.Manifest;
 import android.app.NotificationManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -68,6 +73,9 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
     private FirebaseAuth mAuth = null;
     private FirebaseUser firebaseUser;
     private DatabaseReference databaseReference;
+    private boolean hasExternalWritePermission = false;
+
+    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +108,6 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                     .beginTransaction()
                     .replace(R.id.content_book_detail, aBookDetailFragment)
                     .commit();
-
         }
 
         adapter = new BookListAdapter(this, bookList);
@@ -125,14 +132,18 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                     }
                 });
 
+        // Obtenemos el servicio para copiar texto
         clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
-//if you want to update the items at a later time it is recommended to keep it in a variable
+        // Comprobamos que tengamos permisos de escritura en tarjeta externa
+        hasExternalWritePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+
+        // Añadimos las opciones que queremos en el menú
         SecondaryDrawerItem item1 = new SecondaryDrawerItem().withIdentifier(1).withName(R.string.drawer_item_other_apps).withTag("");
         SecondaryDrawerItem item2 = new SecondaryDrawerItem().withIdentifier(2).withName(R.string.drawer_item_copy_clipboard);
         SecondaryDrawerItem item3 = new SecondaryDrawerItem().withIdentifier(3).withName(R.string.drawer_item_whatsapp);
 
-// Create the AccountHeader
+        // Creamos la cabecera del menú
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.color.lightBackground)
@@ -140,7 +151,8 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                         new ProfileDrawerItem().withName(getResources().getString(R.string.firebase_username)).withEmail(getResources().getString(R.string.firebase_email)).withIcon(getResources().getDrawable(R.drawable.ic_default_user))
                 )
                 .build();
-//create the drawer and remember the `Drawer` result object
+
+        // Creamos el menú
         Drawer result = new DrawerBuilder()
                 .withAccountHeader(headerResult)
                 .withActivity(this)
@@ -163,47 +175,56 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                                 Toast.makeText(BookListActivity.this, clipboard.getPrimaryClip().getItemAt(0).getText(), Toast.LENGTH_SHORT).show();
                                 break;
                             default:
-                                Uri imageUri = null;
+                                checkForPermission();
 
-                                String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
-                                File sharedDir = new File(root + File.separator + "shared_images");
+                                if (hasExternalWritePermission) { // Tenemos permiso para escribir en la tarjeta externa
+                                    Uri imageUri = null;
 
-                                if (!sharedDir.exists()) {
-                                    sharedDir.mkdirs();
+                                    // Cogemos la referencia al directorio externo
+                                    String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
+                                    File sharedDir = new File(root + File.separator + "shared_images");
+
+                                    if (!sharedDir.exists()) {
+                                        sharedDir.mkdirs();
+                                    }
+
+                                    // Creamos el archivo a compartir
+                                    File sharedImageFile = new File(sharedDir, "sharedImage.jpg");
+
+                                    if (sharedImageFile.exists())
+                                        sharedImageFile.delete();
+
+                                    try {
+                                        FileOutputStream fileOutputStream = new FileOutputStream(sharedImageFile);
+
+                                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_default_user);
+                                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+                                        fileOutputStream.flush();
+                                        fileOutputStream.close();
+
+                                        imageUri = Uri.fromFile(sharedImageFile);
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    // Preparamos el INTENT para compartir la imagen
+                                    Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                                    sendIntent.putExtra(Intent.EXTRA_TEXT, getResources().getText(R.string.drawer_item_other_apps));
+                                    sendIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                                    sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                                    sendIntent.setType("image/*");
+
+                                    // Fijamos la aplicación  Whatsapp
+                                    if (drawerItem.getIdentifier() == 3) {
+                                        sendIntent.setPackage("com.whatsapp");
+                                    }
+
+                                    // Mostramos el selector de aplicaciones
+                                    startActivity(Intent.createChooser(sendIntent, getResources().getString(R.string.drawer_item_other_apps)));
                                 }
 
-                                String sharedImageName = "sharedImage.png";
-                                File sharedImageFile = new File(sharedDir, sharedImageName);
-
-                                if (sharedImageFile.exists())
-                                    sharedImageFile.delete();
-
-                                try {
-                                    FileOutputStream fileOutputStream = new FileOutputStream(sharedImageFile);
-
-                                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_default_user);
-                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
-                                    fileOutputStream.flush();
-                                    fileOutputStream.close();
-
-                                    imageUri = Uri.fromFile(sharedImageFile);
-
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-
-                                Intent sendIntent = new Intent(Intent.ACTION_SEND);
-                                sendIntent.putExtra(Intent.EXTRA_TEXT, getResources().getText(R.string.drawer_item_other_apps));
-                                sendIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
-                                sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                                sendIntent.setType("image/*");
-
-                                if (drawerItem.getIdentifier() == 3) {
-                                    sendIntent.setPackage("com.whatsapp");
-                                }
-
-                                startActivity(Intent.createChooser(sendIntent, getResources().getString(R.string.drawer_item_other_apps)));
                                 break;
                         }
                         return false;
@@ -346,6 +367,49 @@ public class BookListActivity extends AppCompatActivity implements BookDetailFra
                 } else {
                     Toast.makeText(BookListActivity.this, getString(R.string.error_message_delete_book), Toast.LENGTH_LONG).show();
                 }
+            }
+        }
+    }
+
+    // Función para comprobar los permisos de escritura en la tarjeta externa
+    private void checkForPermission() {
+        if (!hasExternalWritePermission) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                Snackbar.make(swipeRefreshLayout, R.string.common_message_ask_text, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(R.string.common_message_ask, new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View view) {
+                                askForWritePermission();
+                            }
+                        })
+                        .show();
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+                askForWritePermission();
+            }
+        }
+    }
+
+    private void askForWritePermission() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                hasExternalWritePermission = (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED);
+                return;
             }
         }
     }
